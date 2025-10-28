@@ -9,7 +9,13 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddAutoMapper(cfg => cfg.AddMaps(typeof(Program).Assembly)); // Fix for CS1503  
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        // Esta línea indica al serializer que ignore los bucles
+        options.JsonSerializerOptions.ReferenceHandler =
+            System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+    });
 
 builder.Services.AddDbContext<ApplicationDbContext>(opciones => opciones.UseSqlServer("name=DefaultConnection"));
 

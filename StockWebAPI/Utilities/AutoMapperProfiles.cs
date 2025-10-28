@@ -10,6 +10,7 @@ namespace StockWebAPI.Utilities
         {
             //Alamcen
             CreateMap<CreateAlmacenDTO, Almacen>();
+            CreateMap<UpdateAlmacenDTO, Almacen>();
 
             //Zona
             CreateMap<CreateZonaDTO, Zona>();

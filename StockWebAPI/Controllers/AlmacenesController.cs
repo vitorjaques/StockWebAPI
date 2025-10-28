@@ -31,7 +31,9 @@ namespace StockWebAPI.Controllers
         [HttpGet("{id:guid}")]
         public async Task<ActionResult<Almacen>> GetAlmacenById(Guid id)
         {
-            var almacen = await context.Almacenes.FirstOrDefaultAsync(x => x.AlmacenId == id);
+            var almacen = await context.Almacenes
+                .Include(x => x.Zonas)
+                .FirstOrDefaultAsync(x => x.AlmacenId == id);
             if (almacen == null)
             {
                 return NotFound();
@@ -53,14 +55,17 @@ namespace StockWebAPI.Controllers
             return CreatedAtAction(nameof(GetAlmacenById), new { id = almacen.AlmacenId }, almacen);
         }
 
-        [HttpPut("{id:guid}")]
-        public async Task<ActionResult> UpdateAlmacen(Guid id, [FromBody] Almacen almacen)
+        [HttpPut("{idAlmacen:guid}")]
+        public async Task<ActionResult> UpdateAlmacen(Guid idAlmacen, [FromBody] UpdateAlmacenDTO updateAlmacenDTO)
         {
-            var almacenExistente = await context.Almacenes.FirstOrDefaultAsync(x => x.AlmacenId == id);
+            var almacenExistente = await context.Almacenes.FirstOrDefaultAsync(x => x.AlmacenId == idAlmacen);
             if (almacenExistente == null)
             {
                 return NotFound();
             }
+
+            var almacen = mapper.Map<Almacen>(updateAlmacenDTO);
+
             almacenExistente.Nombre = almacen.Nombre;
             almacenExistente.Activo = almacen.Activo;
             await context.SaveChangesAsync();
